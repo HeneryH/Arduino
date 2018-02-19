@@ -25,9 +25,9 @@ sumpSMS : { label:'SumpPump : SMS (below 15cm)',
            },
 
 sumpPollAlert : {
-  label:'Sump Alert',
-  icon:'Check every 5 minutes to see if node is checking in, Alert if last metric is older than 10 min',
-  descr:'Sump Alert',
+  label:'Sump not checking in.',
+  icon:'mail', 
+  descr:'Check every 5 minutes to see if node is checking in, Alert if last metric is older than 15 min',
   nextSchedule:function(nodeAtScheduleTime) { return 5*60*1000 /* 5 min */ ; },
   scheduledExecute:function(nodeAtScheduleTime) {
     db.findOne({ _id : nodeAtScheduleTime._id }, function (err, nodeRightNow) {
@@ -38,9 +38,8 @@ sumpPollAlert : {
            ' last updated:' +
            ((Date.now() - new Date(nodeRightNow.metrics['CM'].updated).getTime()))/1000 +
            ' seconds ago');
-      }
-      if (nodeRightNow) {
-           if (  (Date.now() - new Date(nodeRightNow.metrics['CM'].updated).getTime()) > 10*60*1000 /* 10 min */ )
+
+           if (  (Date.now() - new Date(nodeRightNow.metrics['CM'].updated).getTime()) > 15*60*1000 /* 10 min */ )
            {
                io.sockets.emit('LOG', '******* Check in is NOT OK.  *******');
                sendEmail('SUMP PUMP ALERT', 'Sump Pump Node has not checked in in over 10 mins - [' +
